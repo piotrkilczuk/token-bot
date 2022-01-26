@@ -8,6 +8,11 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.9"
 requests = "^2.27.1"
+Flask = "^2.0.2"
+boto3 = "^1.20.43"
+serverless-wsgi = "^3.0.0"
+pynamodb = "^5.2.0"
+pendulum = "^2.1.2"
 
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"

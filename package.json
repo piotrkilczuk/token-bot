@@ -1,0 +1,9 @@
+{
+  "name": "token-bot",
+  "version": "1.0.0",
+  "description": "Example of a Python Flask API service backed by DynamoDB with traditional Serverless Framework",
+  "author": "",
+  "devDependencies": {
+    "serverless-python-requirements": "^5.1.0"
+  }
+}

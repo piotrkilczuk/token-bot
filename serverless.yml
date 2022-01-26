@@ -1,0 +1,66 @@
+service: token-bot
+
+frameworkVersion: '2'
+configValidationMode: error
+
+custom:
+  tableName: 'token-bot-users-table-${self:provider.stage}'
+  wsgi:
+    app: token_bot.app.app
+
+provider:
+  name: aws
+  runtime: python3.9
+  lambdaHashingVersion: '20201221'
+  memorySize: 256
+  timeout: 10
+  stage: dev
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [ TokenTable, Arn ]
+  environment:
+    API_KEY: 1e54d7061991dda0a77ad6a9ae34bcd332a7df79b36bae0ba723a038d7244814
+    PYTHONPATH: src/
+    USERS_TABLE: ${self:custom.tableName}
+
+package:
+  patterns:
+    - '!**'
+    - 'src/**'
+    - '!__pycache__'
+
+functions:
+  api:
+  wsgi:
+    handler: token_bot.wsgi.handler
+    events:
+      - http: ANY /
+      - http: ANY /{proxy+}
+
+resources:
+  Resources:
+    TokenTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: 'PAY_PER_REQUEST'
+        AttributeDefinitions:
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: name
+            KeyType: HASH
+        TableName: ${self:custom.tableName}
+
+plugins:
+  - serverless-python-requirements
